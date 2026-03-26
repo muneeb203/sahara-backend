@@ -1,0 +1,109 @@
+# HerHaq Chatbot Configuration
+
+# Data paths
+data:
+  source_dir: "../FYP_dataset"
+  processed_dir: "./data/processed"
+  embeddings_dir: "./embeddings"
+  
+# Dataset files
+dataset_files:
+  laws:
+    - "dataset_penal_code.json"
+    - "muslim-family-law-ord.json"
+    - "kp-women-rights-enf-2019.json"
+    - "motor_veh_ord_1965.json"
+    - "protec-harras-at-workspace-act2010.json"
+  case_studies:
+    - "case_studies_dataset.json"
+  ahadith:
+    - "herhaq_sahih_muslim_hadiths.json"
+    - "filtered_ahadith.json"
+    - "filtered_ahadith2.json"
+
+# Embedding configuration
+embedding:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+  batch_size: 32
+  max_length: 512
+  device: "cuda"  # or "cpu"
+
+# Text chunking
+chunking:
+  chunk_size: 512
+  chunk_overlap: 50
+  min_chunk_size: 100
+
+# Vector store
+vector_store:
+  type: "faiss"
+  index_type: "IndexFlatL2"
+  dimension: 384  # all-MiniLM-L6-v2 dimension
+
+# Retrieval
+retrieval:
+  top_k: 5
+  score_threshold: 0.3
+  rerank: true
+
+# LLaMA configuration
+llm:
+  model_name: "meta-llama/Llama-3.2-3B-Instruct"
+  # Alternative: use Ollama with "llama3:3b"
+  use_ollama: true
+  ollama_base_url: "http://localhost:11434"
+  
+  # Generation parameters
+  max_new_tokens: 512
+  temperature: 0.7
+  top_p: 0.9
+  do_sample: true
+  
+  # Quantization (for resource-constrained systems)
+  load_in_8bit: true
+  load_in_4bit: false
+
+# Prompt templates
+prompts:
+  system_prompt: |
+    You are HerHaq Assistant, an educational AI that helps women understand their rights under Pakistani law and Islamic teachings.
+    
+    Your role is to provide educational information about:
+    - Pakistani laws and legal protections
+    - Islamic teachings from authentic sources
+    - Legal procedures and rights in Pakistan
+    - Religious guidance from verified hadith
+    
+    Important guidelines:
+    - This is for EDUCATIONAL purposes only
+    - You are explaining what laws and religious texts say
+    - You are NOT providing personal legal or religious advice
+    - Always cite specific sources (law sections, hadith references)
+    - Use clear, simple language
+    - Be empathetic and supportive
+    - Acknowledge difficult situations
+    - Recommend consulting professionals (lawyers, scholars) for specific cases
+    - Always include proper citations:
+      * For laws: "Section X of [Act Name]"
+      * For hadith: "[Collection Name], Hadith [Number]"
+    
+    Remember: You are an educational resource explaining what Pakistani law and Islamic teachings say about various situations.
+  
+  user_prompt_template: |
+    Context from knowledge base:
+    {context}
+    
+    User Question: {question}
+    
+    Please provide a helpful, accurate, and compassionate response based on the context above. Always cite your sources.
+
+# Chatbot behavior
+chatbot:
+  max_history: 5
+  enable_followup: true
+  safety_check: true
+  
+# Logging
+logging:
+  level: "INFO"
+  file: "chatbot.log"

@@ -1,0 +1,124 @@
+═══════════════════════════════════════════════════════════════
+  OLLAMA SETUP - QUICK CHECKLIST
+═══════════════════════════════════════════════════════════════
+
+Follow these steps IN ORDER:
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 1: INSTALL OLLAMA (5 minutes)                         │
+└─────────────────────────────────────────────────────────────┘
+
+1. Open browser → https://ollama.com/download
+2. Click "Download for Windows"
+3. Run OllamaSetup.exe
+4. Click through installation wizard
+5. Wait for installation to complete
+
+⚠️  IMPORTANT: Close and reopen your terminal after installing!
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 2: VERIFY INSTALLATION (1 minute)                     │
+└─────────────────────────────────────────────────────────────┘
+
+Open NEW PowerShell/Command Prompt and type:
+
+    ollama --version
+
+✅ If you see version number → SUCCESS! Continue to Step 3
+❌ If you see "command not found" → Restart terminal and try again
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 3: DOWNLOAD LLAMA 3B MODEL (10-15 minutes)            │
+└─────────────────────────────────────────────────────────────┘
+
+In your terminal, type:
+
+    ollama pull llama3:3b
+
+Wait for download (2GB, takes 5-15 minutes)
+You'll see a progress bar.
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 4: VERIFY MODEL (1 minute)                            │
+└─────────────────────────────────────────────────────────────┘
+
+Type:
+
+    ollama list
+
+✅ You should see "llama3:3b" in the list
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 5: TEST OLLAMA (1 minute)                             │
+└─────────────────────────────────────────────────────────────┘
+
+Type:
+
+    ollama run llama3:3b "Hello, how are you?"
+
+✅ If you get a response → SUCCESS!
+   Press Ctrl+D or type /bye to exit
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 6: RUN THE CHATBOT (1 minute)                         │
+└─────────────────────────────────────────────────────────────┘
+
+Navigate to project folder:
+
+    cd D:\uni\FYP\herhaq_chatbot
+
+Run the web interface:
+
+    streamlit run app.py
+
+✅ Browser should open automatically to http://localhost:8501
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 7: TEST THE CHATBOT                                   │
+└─────────────────────────────────────────────────────────────┘
+
+Try these questions:
+• "What are my inheritance rights as a daughter?"
+• "How can I file a harassment complaint at work?"
+• "Can my husband divorce me without my consent?"
+
+═══════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING:
+
+Problem: "ollama: command not found"
+Solution: Close terminal, open NEW terminal, try again
+
+Problem: "connection refused"
+Solution: Type "ollama serve" in a separate terminal
+
+Problem: Slow download
+Solution: Normal! Model is 2GB, be patient
+
+Problem: Out of memory
+Solution: Close other applications, restart computer
+
+═══════════════════════════════════════════════════════════════
+
+CURRENT STATUS:
+✅ Dataset processed (7,743 chunks)
+✅ Embeddings generated (384-dim vectors)
+✅ Vector store built (FAISS index)
+✅ Retrieval system tested (working perfectly)
+✅ Config updated (use_ollama: true)
+⏳ Ollama installation (YOU ARE HERE)
+⏳ LLaMA 3B download (NEXT STEP)
+⏳ Run chatbot (FINAL STEP)
+
+═══════════════════════════════════════════════════════════════
+
+TOTAL TIME: ~20-25 minutes
+DIFFICULTY: Easy
+INTERNET REQUIRED: Yes (for downloading model)
+
+═══════════════════════════════════════════════════════════════
+
+For detailed help, see: OLLAMA_SETUP.md
+For troubleshooting, see: FAQ.md
+
+═══════════════════════════════════════════════════════════════
