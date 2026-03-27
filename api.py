@@ -42,6 +42,7 @@ app = FastAPI(title="HerHaq Chatbot API", version="1.0.0")
 chatbot: Optional[HerHaqChatbot] = None
 session_histories: Dict[str, List[Dict[str, Any]]] = {}
 chatbot_lock = threading.Lock()
+init_lock = threading.Lock()
 
 
 def _parse_cors_origins() -> List[str]:
@@ -61,14 +62,18 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
-def startup_event() -> None:
-    """Initialize chatbot once at startup."""
+def get_chatbot() -> HerHaqChatbot:
+    """Lazy initialize chatbot to avoid slow boot-time failures on Render."""
     global chatbot
+    if chatbot is not None:
+        return chatbot
 
-    setup_logging()
-    config = load_config()
-    chatbot = HerHaqChatbot(config)
+    with init_lock:
+        if chatbot is None:
+            setup_logging()
+            config = load_config()
+            chatbot = HerHaqChatbot(config)
+    return chatbot
 
 
 @app.get("/")
@@ -80,16 +85,16 @@ def root() -> Dict[str, str]:
 @app.get("/health")
 def health() -> Dict[str, str]:
     """Health endpoint for uptime checks."""
-    if chatbot is None:
-        raise HTTPException(status_code=503, detail="Chatbot not initialized")
-    return {"status": "ok"}
+    return {
+        "status": "ok",
+        "chatbot_initialized": "true" if chatbot is not None else "false",
+    }
 
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest) -> ChatResponse:
     """Handle chatbot query via API."""
-    if chatbot is None:
-        raise HTTPException(status_code=503, detail="Chatbot not initialized")
+    active_chatbot = get_chatbot()
 
     session_id = (request.session_id or "default").strip() or "default"
     message = request.message.strip()
@@ -98,9 +103,9 @@ def chat(request: ChatRequest) -> ChatResponse:
 
     try:
         with chatbot_lock:
-            chatbot.conversation_history = session_histories.get(session_id, []).copy()
-            result = chatbot.chat(message)
-            session_histories[session_id] = chatbot.get_conversation_history().copy()
+            active_chatbot.conversation_history = session_histories.get(session_id, []).copy()
+            result = active_chatbot.chat(message)
+            session_histories[session_id] = active_chatbot.get_conversation_history().copy()
 
         return ChatResponse(
             response=result["response"],
